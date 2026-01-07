@@ -39,6 +39,8 @@ jobs:
           cache: "npm"
       - name: Install dependencies
         run: npm install
+      - name: Install Playwright browsers
+        run: npx playwright install chromium
       - name: Download GU Wallet extension
         run: npm run download:gu-wallet
       - name: Test
