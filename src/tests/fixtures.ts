@@ -1,6 +1,9 @@
 import { test as base } from 'playwright-bdd';
 import { chromium, type BrowserContext, type Page } from '@playwright/test';
 import path from 'path';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 export type TestFixtures = {
   context: BrowserContext;
@@ -18,12 +21,12 @@ export const test = base.extend<{
   context: async ({ }, use, testInfo) => {
     const pathToExtension = path.join(__dirname, '../../extensions/gu-wallet');
 
-    // Enable headless mode by default, can be overridden with HEADED=true environment variable
-    const headless = process.env.ENABLE_HEADLESS_MODE !== 'true';
+    console.log('ENABLE_HEADLESS_MODE', process.env.ENABLE_HEADLESS_MODE);
+    console.log('Boolean(process.env.ENABLE_HEADLESS_MODE ?? true)', Boolean(process.env.ENABLE_HEADLESS_MODE || true));
 
     const context = await chromium.launchPersistentContext('', {
       channel: 'chromium',
-      headless: headless,
+      headless: process.env.ENABLE_HEADLESS_MODE === 'false' ? false : true,
       args: [
         `--disable-extensions-except=${pathToExtension}`,
         `--load-extension=${pathToExtension}`,
