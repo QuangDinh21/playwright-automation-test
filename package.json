@@ -1,0 +1,22 @@
+{
+  "name": "playwright-example",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "download:gu-wallet": "node ./scripts/download-gu-wallet-extension.js",
+    "test": "npx bddgen && playwright test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.57.0",
+    "@types/node": "^25.0.3",
+    "adm-zip": "^0.5.16",
+    "axios": "^1.7.7",
+    "playwright-bdd": "^7.5.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  }
+}

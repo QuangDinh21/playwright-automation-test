@@ -1,0 +1,56 @@
+name: Run automation test
+run-name: Run automation test in ${{ github.ref_name }} by @${{ github.actor }}
+on:
+  workflow_dispatch:
+    inputs:
+      joc_dashboard_testing_url:
+        description: "JOC Dashboard Testing URL"
+        required: true
+        type: string
+        default: "https://app.test.japanopenchain.org/"
+      screenshot_mode:
+        type: choice
+        description: Choose screenshot mode
+        options:
+          - on
+          - off
+          - only-on-failure
+        default: only-on-failure
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.actor }}
+  cancel-in-progress: true
+
+env:
+  PROJECT_ID: joc-dashboard
+  SERVICE_ID: default
+
+jobs:
+  automation-test:
+    name: Run automation test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Chrome
+        uses: browser-actions/setup-chrome@v1
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 22.x
+          cache: "npm"
+      - name: Install dependencies
+        run: npm install
+      - name: Download GU Wallet extension
+        run: npm run download:gu-wallet
+      - name: Test
+        run: npm run test
+        env:
+          JOC_DASHBOARD_TESTING_URL: ${{ inputs.joc_dashboard_testing_url }}
+          SCREENSHOT_MODE: ${{ inputs.screenshot_mode }}
+          ENABLE_HEADLESS_MODE: true
+        continue-on-error: true
+      - name: Upload reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: JOC Dashboard Automation Test Reports
+          path: |
+            playwright-report/
